@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: SocialHive documentation
+    url: https://github.com/winsell-vn/social-hive#readme
+    about: Setup, architecture and deployment notes.
+  - name: WISA Connect
+    url: https://github.com/winsell-vn/wisa-connect
+    about: The desktop client for the WISA gateway — report its bugs in that repository.
+  - name: Security vulnerability
+    url: https://github.com/winsell-vn/social-hive/security/advisories/new
+    about: Report privately. Do not open a public issue for a vulnerability.

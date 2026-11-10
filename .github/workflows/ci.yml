@@ -1,0 +1,130 @@
+name: CI
+
+# Continuous integration for SocialHive.
+#
+# Two independent jobs: the API (NestJS + Prisma) and the web client
+# (Next.js). Neither job needs a database or a running Redis — the test
+# suites are unit tests with mocked repositories — so the pipeline stays
+# fast and free of external services.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: "22"
+
+jobs:
+  backend:
+    name: API — build and test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Backend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: Backend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma client
+        # `prisma generate` resolves the datasource from the schema. A
+        # syntactically valid placeholder is enough — no database is contacted.
+        run: npx prisma generate
+        env:
+          DATABASE_URL: mysql://ci:ci@127.0.0.1:3306/ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Test
+        run: npm test -- --runInBand
+
+  frontend:
+    name: Web — type-check, test and build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Frontend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: Frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Placeholders only. The build reads these at compile time for
+      # NEXT_PUBLIC_* values; no real credential is needed or wanted here.
+      - name: Type-check
+        run: npm run type-check
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:4000/api
+          NEXT_PUBLIC_WS_URL: ws://localhost:4000
+          NEXT_PUBLIC_APP_URL: http://localhost:3000
+          NEXT_PUBLIC_DOMAIN: localhost
+          NEXT_PUBLIC_TURNSTILE_SITE_KEY: ""
+
+      - name: Test
+        run: npm test
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:4000/api
+          NEXT_PUBLIC_WS_URL: ws://localhost:4000
+          NEXT_PUBLIC_APP_URL: http://localhost:3000
+          NEXT_PUBLIC_DOMAIN: localhost
+          NEXT_PUBLIC_TURNSTILE_SITE_KEY: ""
+
+      - name: Build
+        run: npm run build
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:4000/api
+          NEXT_PUBLIC_WS_URL: ws://localhost:4000
+          NEXT_PUBLIC_APP_URL: http://localhost:3000
+          NEXT_PUBLIC_DOMAIN: localhost
+          NEXT_PUBLIC_TURNSTILE_SITE_KEY: ""
+
+  secret-scan:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Cheap defence in depth on top of GitHub's own secret scanning and
+      # push protection, which are enabled for this repository.
+      - name: Scan tracked files for credential patterns
+        run: |
+          set -euo pipefail
+          patterns='(gsk_[A-Za-z0-9]{20,}|sk-[A-Za-z0-9]{32,}|ghp_[A-Za-z0-9]{36}|github_pat_[A-Za-z0-9_]{60,}|AKIA[0-9A-Z]{16}|-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----)'
+          hits=$(git grep -nEI "$patterns" -- . ':!*.example' ':!*.md' || true)
+          if [ -n "$hits" ]; then
+            echo "::error::Potential credential committed in this branch."
+            echo "$hits"
+            exit 1
+          fi
+          echo "No credential patterns found."

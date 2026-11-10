@@ -1,0 +1,17 @@
+# Code owners for SocialHive.
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owner for everything.
+* @winsell-vn/maintainers
+
+# CI, release automation and dependency policy.
+/.github/ @winsell-vn/maintainers
+
+# Database schema — schema changes need a migration and a second pair of eyes.
+/Backend/prisma/schema.prisma @winsell-vn/maintainers
+
+# Authentication, session handling and file upload are the security-critical
+# surfaces. They get the same reviewers as the schema.
+/Backend/src/modules/auth/ @winsell-vn/maintainers
+/Backend/src/modules/upload/ @winsell-vn/maintainers
+/Backend/src/common/guards/ @winsell-vn/maintainers
