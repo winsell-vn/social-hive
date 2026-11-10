@@ -1,0 +1,824 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextIndex", "fullTextSearch"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Comment {
+  id            String    @id @default(uuid())
+  postId        String
+  authorId      String
+  parentId      String?
+  content       String    @db.Text
+  likeCount     Int       @default(0)
+  depth         Int       @default(0)
+  editedAt      DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  author        User      @relation(fields: [authorId], references: [id], onDelete: Cascade, map: "Comment_authorId_fkey")
+  parent        Comment?  @relation("CommentReplies", fields: [parentId], references: [id], map: "Comment_parentId_fkey")
+  replies       Comment[] @relation("CommentReplies")
+  post          Post      @relation(fields: [postId], references: [id], onDelete: Cascade, map: "Comment_postId_fkey")
+  likes         Like[]
+
+  @@map("comment")
+  @@index([authorId], map: "Comment_authorId_idx")
+  @@index([createdAt], map: "Comment_createdAt_idx")
+  @@index([parentId], map: "Comment_parentId_idx")
+  @@index([postId], map: "Comment_postId_idx")
+  @@unique([authorId, postId, parentId], map: "Comment_authorId_postId_parentId_unique")
+}
+
+model EmailVerification {
+  id         String    @id @default(uuid())
+  email      String
+  token      String    @unique(map: "EmailVerification_token_key")
+  expiresAt  DateTime
+  verifiedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@map("emailverification")
+  @@index([email], map: "EmailVerification_email_idx")
+  @@index([token], map: "EmailVerification_token_idx")
+}
+
+model Follow {
+  id        String   @id @default(uuid())
+  followerId String
+  followingId String
+  createdAt DateTime @default(now())
+  follower  User     @relation("Followers", fields: [followerId], references: [id], onDelete: Cascade, map: "Follow_followerId_fkey")
+  following User     @relation("Following", fields: [followingId], references: [id], onDelete: Cascade, map: "Follow_followingId_fkey")
+
+  @@map("follow")
+  @@unique([followerId, followingId], map: "Follow_followerId_followingId_key")
+  @@index([followerId], map: "Follow_followerId_idx")
+  @@index([followingId], map: "Follow_followingId_idx")
+}
+
+model Hashtag {
+  id            String        @id @default(uuid())
+  name          String        @unique(map: "Hashtag_name_key")
+  postCount     Int           @default(0)
+  trendingScore Float         @default(0)
+  createdAt     DateTime      @default(now())
+  posts         PostHashtag[]
+
+  @@map("hashtag")
+  @@index([name], map: "Hashtag_name_idx")
+  @@index([trendingScore], map: "Hashtag_trendingScore_idx")
+}
+
+model Like {
+  id           String       @id @default(uuid())
+  userId       String
+  postId       String?
+  commentId    String?
+  reactionType ReactionType @default(LIKE)
+  createdAt    DateTime     @default(now())
+  comment      Comment?     @relation(fields: [commentId], references: [id], onDelete: Cascade, map: "Like_commentId_fkey")
+  post         Post?        @relation(fields: [postId], references: [id], onDelete: Cascade, map: "Like_postId_fkey")
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade, map: "Like_userId_fkey")
+
+  @@map("like")
+  @@unique([userId, commentId], map: "Like_userId_commentId_key")
+  @@unique([userId, postId], map: "Like_userId_postId_key")
+  @@index([commentId], map: "Like_commentId_idx")
+  @@index([postId], map: "Like_postId_idx")
+}
+
+model Notification {
+  id        String           @id @default(uuid())
+  userId    String
+  type      NotificationType
+  title     String
+  data      String?          @db.LongText
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade, map: "Notification_userId_fkey")
+
+  @@map("notification")
+  @@index([createdAt], map: "Notification_createdAt_idx")
+  @@index([userId, isRead], map: "Notification_userId_isRead_idx")
+}
+
+model PasswordReset {
+  id        String    @id @default(uuid())
+  email     String
+  token     String    @unique(map: "PasswordReset_token_key")
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@map("passwordreset")
+  @@index([email], map: "PasswordReset_email_idx")
+  @@index([token], map: "PasswordReset_token_idx")
+}
+
+model Post {
+  id            String        @id @default(uuid())
+  authorId      String
+  content       String        @db.MediumText
+  images        String?       @db.LongText
+  slug          String?       // SEO-friendly URL slug generated from content
+  status        PostStatus    @default(PENDING)
+  moderatorId   String?
+  moderatorNote String?
+  publishAt     DateTime?
+  viewCount     Int           @default(0)
+  likeCount     Int           @default(0)
+  commentCount  Int           @default(0)
+  shareCount    Int           @default(0)  // Track how many times this post has been shared
+  sharedPostId  String?       // If this is a share/repost, reference to original post
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  comments      Comment[]
+  likes         Like[]
+  author        User          @relation(fields: [authorId], references: [id], onDelete: Cascade, map: "Post_authorId_fkey")
+  hashtags      PostHashtag[]
+  sharedPost    Post?         @relation("PostShares", fields: [sharedPostId], references: [id], onDelete: SetNull, map: "Post_sharedPostId_fkey")
+  shares        Post[]        @relation("PostShares")
+  blogPost      BlogPost?     // Reverse relation for Post-to-Blog sync
+
+  @@map("post")
+  @@unique([authorId, slug], map: "Post_authorId_slug_key")
+  @@index([authorId], map: "Post_authorId_idx")
+  @@index([createdAt], map: "Post_createdAt_idx")
+  @@index([sharedPostId], map: "Post_sharedPostId_idx")
+  @@index([status], map: "Post_status_idx")
+  @@index([status, createdAt], map: "Post_status_createdAt_idx")
+  @@index([status, publishAt], map: "Post_status_publishAt_idx")
+  @@index([status, publishAt, likeCount], map: "Post_trending_idx")
+  @@fulltext([content], map: "Post_content_idx")
+  @@index([updatedAt], map: "Post_updatedAt_idx")
+  @@index([slug], map: "Post_slug_idx")
+}
+
+model PostHashtag {
+  postId    String
+  hashtagId String
+  hashtag   Hashtag @relation(fields: [hashtagId], references: [id], onDelete: Cascade, map: "PostHashtag_hashtagId_fkey")
+  post      Post    @relation(fields: [postId], references: [id], onDelete: Cascade, map: "PostHashtag_postId_fkey")
+
+  @@id([postId, hashtagId])
+  @@map("posthashtag")
+  @@index([hashtagId], map: "PostHashtag_hashtagId_fkey")
+}
+
+model Profile {
+  id                 String    @id @default(uuid())
+  userId             String    @unique(map: "Profile_userId_key")
+  username           String    @unique(map: "Profile_username_key")
+  displayName        String?
+  avatar             String?
+  coverPhoto         String?
+  bio                String?   @db.VarChar(500)
+  location           String?   @db.VarChar(100)
+  website            String?   @db.VarChar(255)
+  socialLinks        String?   @db.LongText
+  portfolio          String?   @db.LongText
+  isPrivate          Boolean   @default(false)
+  lastUsernameChange DateTime?
+  closeFriends       String?   @db.LongText
+  followerCount      Int       @default(0)
+  followingCount     Int       @default(0)
+  jobTitle           String?
+  company            String?
+  expertise          Json?
+  credentials        Json?
+  isVerifiedExpert   Boolean   @default(false)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  user               User      @relation(fields: [userId], references: [id], onDelete: Cascade, map: "Profile_userId_fkey")
+
+  @@map("profile")
+  @@index([username], map: "Profile_username_idx")
+  @@index([updatedAt], map: "Profile_updatedAt_idx")
+}
+
+model ReputationTransaction {
+  id        String   @id @default(uuid())
+  userId    String
+  action    String
+  points    Int
+  metadata  String?  @db.LongText
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, map: "ReputationTransaction_userId_fkey")
+
+  @@map("reputationtransaction")
+  @@index([userId, createdAt], map: "ReputationTransaction_userId_createdAt_idx")
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  userId       String
+  refreshToken String   @unique(map: "Session_refreshToken_key")
+  deviceInfo   String?
+  ipAddress    String?
+  lastActiveAt DateTime @default(now())
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+  rememberMe   Boolean  @default(false)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade, map: "Session_userId_fkey")
+
+  @@map("session")
+  @@index([refreshToken], map: "Session_refreshToken_idx")
+  @@index([userId], map: "Session_userId_idx")
+}
+
+model User {
+  id                       String                    @id @default(uuid())
+  email                    String                    @unique(map: "User_email_key")
+  password                 String
+  role                     Role                      @default(USER)
+  karma                    Int                       @default(0)
+  tier                     Tier                      @default(NEWCOMER)
+  isActive                 Boolean                   @default(false)
+  isAiAgent                Boolean                   @default(false) // Flag to identify AI agent users (AC-005)
+  lastActiveAt             DateTime                  @default(now())
+  createdAt                DateTime                  @default(now())
+  updatedAt                DateTime                  @updatedAt
+  // Account deletion with grace period
+  deletionRequestedAt      DateTime?
+  deletionScheduledFor     DateTime?
+  comments                 Comment[]
+  followers                Follow[]                  @relation("Following")
+  following                Follow[]                  @relation("Followers")
+  likes                    Like[]
+  notifications            Notification[]
+  posts                    Post[]
+  profile                  Profile?
+  reputationTransactions   ReputationTransaction[]
+  sessions                 Session[]
+  sentFriendRequests       FriendRequest[]           @relation("SentFriendRequests")
+  receivedFriendRequests   FriendRequest[]           @relation("ReceivedFriendRequests")
+  settings                 UserSettings?
+  aiAgent                  AiAgent?
+  blogPosts                BlogPost[]                @relation("BlogPostAuthor")
+  media                    Media[]
+
+  @@map("user")
+  @@index([email], map: "User_email_idx")
+  @@index([karma], map: "User_karma_idx")
+  @@index([tier], map: "User_tier_idx")
+  @@index([isAiAgent], map: "User_isAiAgent_idx")
+}
+
+model UserSettings {
+  id                  String              @id @default(uuid())
+  userId              String              @unique(map: "UserSettings_userId_key")
+  // Privacy settings
+  profileVisibility   ProfileVisibility   @default(PUBLIC)
+  showActivityStatus  Boolean             @default(true)
+  // Notification settings
+  emailNotifications  Boolean             @default(true)
+  pushNotifications   Boolean             @default(true)
+  notifyOnLike        Boolean             @default(true)
+  notifyOnComment     Boolean             @default(true)
+  notifyOnFollow      Boolean             @default(true)
+  notifyOnMention     Boolean             @default(true)
+  // Security
+  twoFactorEnabled    Boolean             @default(false)
+  twoFactorSecret     String?
+  backupCodes         String?             @db.Text  // JSON array of hashed backup codes
+  lastPasswordChange  DateTime?
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  user                User                @relation(fields: [userId], references: [id], onDelete: Cascade, map: "UserSettings_userId_fkey")
+
+  @@map("user_settings")
+  @@index([userId], map: "UserSettings_userId_idx")
+}
+
+enum ProfileVisibility {
+  PUBLIC
+  FRIENDS
+  PRIVATE
+
+  @@map("profile_visibility")
+}
+
+enum NotificationType {
+  POST_APPROVED
+  POST_REJECTED
+  POST_LIKED
+  POST_COMMENTED
+  COMMENT_REPLIED
+  NEW_FOLLOWER
+  MENTION
+  KARMA_MILESTONE
+  FRIEND_REQUEST_RECEIVED
+  FRIEND_REQUEST_ACCEPTED
+  CHATBOT_HANDOFF
+
+  @@map("notification_type")
+}
+
+enum Role {
+  GUEST
+  USER
+  ADMIN
+  SUPER_ADMIN
+
+  @@map("user_role")
+}
+
+enum ReactionType {
+  LIKE
+  LOVE
+  HAHA
+  WOW
+  SAD
+  ANGRY
+
+  @@map("like_reactionType")
+}
+
+enum PostStatus {
+  DRAFT
+  PENDING
+  APPROVED
+  REJECTED
+  PUBLISHED
+
+  @@map("post_status")
+}
+
+enum Tier {
+  NEWCOMER
+  CONTRIBUTOR
+  EXPERT
+  MASTER
+  LEGEND
+
+  @@map("user_tier")
+}
+
+enum FriendRequestStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  CANCELLED
+
+  @@map("friend_request_status")
+}
+
+enum AiAgentStatus {
+  ACTIVE
+  PAUSED
+  DISABLED
+
+  @@map("ai_agent_status")
+}
+
+enum AiActionType {
+  POST
+  COMMENT
+  REPLY
+  REACTION
+  SHARE
+
+  @@map("ai_action_type")
+}
+
+enum MemoryType {
+  INTERACTION
+  PREFERENCE
+  CONTEXT
+  FEEDBACK
+
+  @@map("memory_type")
+}
+
+enum ContentFilterResult {
+  PASSED
+  BLOCKED_PROFANITY
+  BLOCKED_DUPLICATE
+  BLOCKED_QUALITY
+  BLOCKED_SPAM
+
+  @@map("content_filter_result")
+}
+
+enum MediaType {
+  AVATAR
+  COVER
+  POST_IMAGE
+  BLOG_IMAGE
+  AD_IMAGE
+
+  @@map("media_type")
+}
+
+enum MediaStatus {
+  PROCESSING
+  READY
+  FAILED
+
+  @@map("media_status")
+}
+
+model FriendRequest {
+  id         String              @id @default(uuid())
+  senderId   String
+  receiverId String
+  status     FriendRequestStatus @default(PENDING)
+  createdAt  DateTime            @default(now())
+  updatedAt  DateTime            @updatedAt
+  sender     User                @relation("SentFriendRequests", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver   User                @relation("ReceivedFriendRequests", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@unique([senderId, receiverId])
+  @@index([senderId, status])
+  @@index([receiverId, status])
+  @@map("friendrequest")
+}
+
+/// AI provider API key. Provider-agnostic: works with any OpenAI-compatible
+/// endpoint (Groq, OpenAI, OpenRouter, local vLLM/Ollama, ...) via baseUrl,
+/// modelId and protocol.
+model AiProviderKey {
+  id           String             @id @default(uuid())
+  name         String
+  encryptedKey String             @db.Text
+  iv           String
+  baseUrl      String             @default("https://api.groq.com/openai/v1")
+  modelId      String             @default("llama-3.1-8b-instant")
+  protocol     AiProviderProtocol @default(OPENAI_CHAT_COMPLETION)
+  isActive     Boolean            @default(true)
+  usageToday   Int                @default(0)
+  usageTotal   Int                @default(0)
+  lastUsedAt   DateTime?
+  lastResetAt  DateTime           @default(now())
+  maxAgents    Int                @default(10)
+  deletedAt    DateTime? // Soft delete timestamp (AC-003)
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  agents       AiAgent[]
+
+  @@map("ai_provider_key")
+  @@index([isActive])
+  @@index([deletedAt])
+}
+
+/// Wire protocol used to talk to the provider endpoint.
+enum AiProviderProtocol {
+  /// POST {baseUrl}/chat/completions - body: { model, messages }
+  OPENAI_CHAT_COMPLETION
+  /// POST {baseUrl}/responses - body: { model, input, instructions }
+  OPENAI_RESPONSE
+}
+
+model AiAgent {
+  id                  String          @id @default(uuid())
+  userId              String          @unique
+  apiKeyId            String
+  name                String
+  personality         String          @db.Text
+  systemPrompt        String          @db.Text
+  status              AiAgentStatus   @default(ACTIVE)
+  activityWindow      String?         @db.Text
+  postFrequency       Int             @default(3)
+  commentFrequency    Int             @default(10)
+  reactionFrequency   Int             @default(20)
+  lastActiveAt        DateTime?
+  totalPosts          Int             @default(0)
+  totalComments       Int             @default(0)
+  totalReactions      Int             @default(0)
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  user                User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  apiKey              AiProviderKey    @relation(fields: [apiKeyId], references: [id])
+  memories            AiAgentMemory[]
+  activityLogs        AiActivityLog[]
+
+  @@map("ai_agent")
+  @@index([status])
+  @@index([apiKeyId])
+}
+
+model AiAgentMemory {
+  id          String      @id @default(uuid())
+  agentId     String
+  type        MemoryType
+  content     String      @db.Text
+  importance  Int         @default(5)
+  expiresAt   DateTime?
+  createdAt   DateTime    @default(now())
+  agent       AiAgent     @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  @@map("ai_agent_memory")
+  @@index([agentId, type])
+  @@index([expiresAt])
+}
+
+model AiActivityLog {
+  id            String              @id @default(uuid())
+  agentId       String
+  actionType    AiActionType
+  targetId      String?
+  targetType    String?
+  content       String?             @db.Text
+  tokensUsed    Int                 @default(0)
+  filterResult  ContentFilterResult @default(PASSED)
+  success       Boolean             @default(true)
+  errorMessage  String?             @db.Text
+  createdAt     DateTime            @default(now())
+  agent         AiAgent             @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  @@map("ai_activity_log")
+  @@index([agentId, createdAt])
+  @@index([actionType])
+  @@index([createdAt])
+}
+
+model ContentHash {
+  id          String    @id @default(uuid())
+  hash        String    @unique
+  agentId     String
+  contentType String
+  createdAt   DateTime  @default(now())
+
+  @@map("content_hash")
+  @@index([agentId])
+  @@index([createdAt])
+}
+
+// Pricing Page Models
+enum QuoteStatus {
+  PENDING
+  CONTACTED
+  QUOTED
+  NEGOTIATING
+  ACCEPTED
+  REJECTED
+  CANCELLED
+
+  @@map("quote_status")
+}
+
+model ServiceCategory {
+  id           String    @id @default(uuid())
+  name         String
+  slug         String    @unique
+  description  String?   @db.Text
+  icon         String?
+  isActive     Boolean   @default(true)
+  displayOrder Int       @default(0)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  services     Service[]
+
+  @@map("service_category")
+  @@index([isActive, displayOrder])
+}
+
+model Service {
+  id           String           @id @default(uuid())
+  name         String
+  slug         String           @unique
+  description  String?          @db.Text
+  icon         String?
+  isActive     Boolean          @default(true)
+  displayOrder Int              @default(0)
+  categoryId   String?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  category     ServiceCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  pricingTiers PricingTier[]
+
+  @@map("service")
+  @@index([isActive, displayOrder])
+  @@index([categoryId])
+}
+
+model PricingTier {
+  id            String   @id @default(uuid())
+  serviceId     String
+  name          String
+  description   String?  @db.Text
+  price         Decimal  @db.Decimal(15, 0)
+  priceNote     String?
+  currency      String   @default("VND")
+  billingType   String   @default("one-time")
+  features      String   @db.LongText
+  isPopular     Boolean  @default(false)
+  isRecommended Boolean  @default(false)
+  displayOrder  Int      @default(0)
+  ctaText       String   @default("Liên hệ tư vấn")
+  ctaLink       String?
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  service       Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@map("pricing_tier")
+  @@index([serviceId, isActive, displayOrder])
+}
+
+model PricingFAQ {
+  id           String   @id @default(uuid())
+  question     String
+  answer       String   @db.Text
+  category     String?
+  displayOrder Int      @default(0)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("pricing_faq")
+  @@index([isActive, displayOrder])
+}
+
+model QuoteRequest {
+  id           String      @id @default(uuid())
+  name         String
+  email        String
+  phone        String?
+  company      String?
+  serviceId    String?
+  tierId       String?
+  budget       String?
+  timeline     String?
+  requirements String?     @db.Text
+  source       String?
+  status       QuoteStatus @default(PENDING)
+  notes        String?     @db.Text
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  @@map("quote_request")
+  @@index([status, createdAt])
+  @@index([email])
+}
+
+// Ads/Promoted Posts
+enum AdPlacement {
+  FEED
+  SIDEBAR
+  BOTH
+
+  @@map("ad_placement")
+}
+
+model Ad {
+  id              String      @id @default(uuid())
+  title           String
+  description     String?     @db.Text
+  imageUrl        String?
+  ctaText         String      @default("Tìm hiểu thêm")
+  ctaLink         String
+  placement       AdPlacement @default(FEED)
+  isActive        Boolean     @default(true)
+  priority        Int         @default(0)  // Higher priority = shown more often
+  clickCount      Int         @default(0)
+  impressionCount Int         @default(0)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  clicks          AdClick[]
+
+  @@map("ad")
+  @@index([isActive, placement])
+  @@index([priority])
+}
+
+model AdClick {
+  id        String   @id @default(uuid())
+  adId      String
+  ad        Ad       @relation(fields: [adId], references: [id], onDelete: Cascade)
+  ipHash    String?  // Hashed IP for rate limiting, not storing raw IPs
+  userAgent String?  @db.Text
+  clickedAt DateTime @default(now())
+
+  @@index([adId, clickedAt])
+  @@index([adId, ipHash, clickedAt])
+  @@map("ad_clicks")
+}
+
+model SystemSetting {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     String   @db.Text
+  category  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("system_setting")
+  @@index([category])
+}
+
+// Blog System Models (Phase 6 - SEO Optimization)
+enum BlogPostStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+
+  @@map("blog_post_status")
+}
+
+enum BlogPostType {
+  ARTICLE
+  TUTORIAL
+  COMPARISON
+  FAQ
+
+  @@map("blog_post_type")
+}
+
+model BlogPost {
+  id              String         @id @default(uuid())
+  title           String
+  slug            String         @unique
+  excerpt         String?        @db.Text
+  content         String         @db.Text
+  featuredImage   String?
+  categoryId      String
+  category        BlogCategory   @relation(fields: [categoryId], references: [id])
+  authorId        String
+  author          User           @relation("BlogPostAuthor", fields: [authorId], references: [id])
+  status          BlogPostStatus @default(DRAFT)
+  postType        BlogPostType   @default(ARTICLE)
+  tags            String?        @db.LongText
+  publishedAt     DateTime?
+  viewCount       Int            @default(0)
+  readingTime     Int            @default(0)
+  tableOfContents Json?
+  takeaways       Json?
+  metaTitle       String?
+  metaDescription String?        @db.Text
+  sourcePostId    String?        @unique
+  sourcePost      Post?          @relation(fields: [sourcePostId], references: [id], onDelete: SetNull)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@map("blog_post")
+  @@index([status, publishedAt])
+  @@index([categoryId])
+  @@index([authorId])
+  @@index([slug])
+  @@index([status, updatedAt], map: "BlogPost_status_updatedAt_idx")
+  @@fulltext([title, content], map: "BlogPost_search_idx")
+}
+
+model BlogCategory {
+  id           String         @id @default(uuid())
+  name         String
+  slug         String         @unique
+  description  String?
+  parentId     String?
+  parent       BlogCategory?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children     BlogCategory[] @relation("CategoryHierarchy")
+  displayOrder Int            @default(0)
+  postCount    Int            @default(0)
+  posts        BlogPost[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  @@map("blog_category")
+  @@index([slug])
+  @@index([parentId])
+}
+
+model Media {
+  id            String      @id @default(uuid())
+  userId        String
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  originalName  String
+  mimeType      String
+  size          Int
+  hash            String?
+  originalSize    Int?
+  compressionRatio Float?
+
+  type          MediaType
+  status        MediaStatus @default(PROCESSING)
+
+  storagePath   String      // Physical path on disk
+  publicUrl     String      // URL to access the image
+
+  originalPath     String?
+  originalUrl      String?
+  originalMimeType String?
+
+  width         Int?
+  height        Int?
+
+  variants      Json?       // { thumbnail: { url, width, height }, medium: { url, width, height } }
+
+  errorMessage  String?     // If status is FAILED
+
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@map("media")
+  @@index([userId])
+  @@index([type])
+  @@index([status])
+  @@index([createdAt])
+  @@index([hash])
+}

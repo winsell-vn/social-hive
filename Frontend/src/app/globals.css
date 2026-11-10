@@ -1,0 +1,362 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Light theme - Facebook light mode style */
+    --background: 0 0% 96%;
+    --foreground: 0 0% 9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 9%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 92%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 92%;
+    --muted-foreground: 0 0% 45%;
+    --accent: 0 0% 92%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 85%;
+    --input: 0 0% 85%;
+    --ring: 0 0% 9%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    /* Facebook Dark Mode + Hacker Vibe - Monochrome Only */
+
+    /* Background: Facebook dark #18191a */
+    --background: 220 13% 11%;
+    --foreground: 0 0% 98%;
+
+    /* Card: Facebook card #242526 */
+    --card: 220 13% 15%;
+    --card-foreground: 0 0% 98%;
+
+    /* Popover: same as card */
+    --popover: 220 13% 15%;
+    --popover-foreground: 0 0% 98%;
+
+    /* Primary: WHITE - monochrome, no blue */
+    --primary: 0 0% 100%;
+    --primary-foreground: 0 0% 0%;
+
+    /* Secondary: Facebook hover #3a3b3c */
+    --secondary: 220 13% 20%;
+    --secondary-foreground: 0 0% 98%;
+
+    /* Muted: subtle background */
+    --muted: 220 13% 20%;
+    --muted-foreground: 0 0% 65%;
+
+    /* Accent: Subtle hover highlight - slightly lighter than card */
+    --accent: 220 13% 22%;
+    --accent-foreground: 0 0% 98%;
+
+    /* Destructive: keep red for errors only */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Border: Facebook border #3e4042 */
+    --border: 220 13% 23%;
+    --input: 220 13% 23%;
+
+    /* Ring: white for focus */
+    --ring: 0 0% 100%;
+
+    /* Rounded corners - Facebook style */
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+
+  /* Force dark mode by default */
+  html {
+    color-scheme: dark;
+  }
+}
+
+/* Facebook-style scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground));
+}
+
+/* Safe area padding for mobile bottom nav */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Mobile bottom nav spacing */
+@media (max-width: 767px) {
+  .main-content {
+    padding-bottom: calc(4rem + env(safe-area-inset-bottom));
+  }
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Focus visible styles */
+@layer utilities {
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+  }
+
+  /* Hide scrollbar utility */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Force light mode within .force-light-mode container — overrides dark: Tailwind classes */
+.dark .force-light-mode {
+  --background: 0 0% 96%;
+  --foreground: 0 0% 9%;
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 9%;
+  --primary: 0 0% 9%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 0 0% 92%;
+  --secondary-foreground: 0 0% 9%;
+  --muted: 0 0% 92%;
+  --muted-foreground: 0 0% 45%;
+  --accent: 210 40% 96%;
+  --accent-foreground: 210 40% 20%;
+  --border: 0 0% 85%;
+  --input: 0 0% 85%;
+  --ring: 0 0% 9%;
+  color-scheme: light;
+  color: hsl(0 0% 9%);
+}
+
+/* Override dark: Tailwind classes inside .force-light-mode */
+.dark .force-light-mode .dark\:bg-gray-900 { background-color: rgb(249 250 251) !important; }
+.dark .force-light-mode .dark\:bg-gray-950 { background-color: rgb(255 255 255) !important; }
+.dark .force-light-mode .dark\:bg-gray-900\/50 { background-color: rgb(249 250 251 / 0.5) !important; }
+.dark .force-light-mode .dark\:text-gray-400 { color: rgb(75 85 99) !important; }
+.dark .force-light-mode .dark\:border-gray-800 { border-color: rgb(229 231 235) !important; }
+.dark .force-light-mode .dark\:hover\:bg-gray-900\/50:hover { background-color: rgb(249 250 251) !important; }
+
+/* Slate overrides for ChatPanel inside force-light-mode */
+.dark .force-light-mode .dark\:bg-slate-800\/95 { background-color: rgb(255 255 255 / 0.95) !important; }
+.dark .force-light-mode .dark\:border-slate-700\/50 { border-color: rgb(226 232 240 / 0.5) !important; }
+.dark .force-light-mode .dark\:text-slate-100 { color: rgb(15 23 42) !important; }
+.dark .force-light-mode .dark\:text-slate-200 { color: rgb(30 41 59) !important; }
+.dark .force-light-mode .dark\:text-slate-400 { color: rgb(100 116 139) !important; }
+
+/* Blue/Red overrides for ChatPanel inside force-light-mode */
+.dark .force-light-mode .dark\:bg-blue-900\/30 { background-color: rgb(219 234 254 / 0.3) !important; }
+.dark .force-light-mode .dark\:bg-red-900\/20 { background-color: rgb(254 226 226 / 0.2) !important; }
+.dark .force-light-mode .dark\:text-red-400 { color: rgb(220 38 38) !important; }
+
+/* CSS Animations for UI Polish */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-left {
+  from {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-right {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes page-transition-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes page-transition-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Animation utility classes */
+.animate-fade-in {
+  animation: fade-in 300ms ease-out forwards;
+}
+
+.animate-slide-up {
+  animation: slide-up 300ms ease-out forwards;
+}
+
+.animate-slide-down {
+  animation: slide-down 300ms ease-out forwards;
+}
+
+.animate-slide-left {
+  animation: slide-left 300ms ease-out forwards;
+}
+
+.animate-slide-right {
+  animation: slide-right 300ms ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scale-in 300ms ease-out forwards;
+}
+
+.animate-page-transition-in {
+  animation: page-transition-in 300ms ease-out forwards;
+}
+
+.animate-page-transition-out {
+  animation: page-transition-out 300ms ease-out forwards;
+}
+
+/* Hide scrollbar utility */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
+
+/* Tier card highlight animation for chatbot focus */
+@keyframes tier-pulse {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(59, 130, 246, 0.6);
+  }
+}
+
+.tier-highlight {
+  animation: tier-pulse 0.5s ease-in-out 3;
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.5) !important;
+  border-color: rgb(59, 130, 246) !important;
+}
+
+/* AI recommendation highlight */
+@keyframes ai-recommend-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.15);
+    border-color: #F59E0B;
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(245, 158, 11, 0.3);
+    border-color: #FBBF24;
+  }
+}
+
+.ai-recommend-highlight {
+  animation: ai-recommend-pulse 1.5s ease-in-out 2;
+  border-width: 3px !important;
+  border-color: #F59E0B !important;
+  box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.15) !important;
+  position: relative;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ai-recommend-highlight {
+    animation: none;
+  }
+  .animate-golden-shimmer {
+    animation: golden-pulse-subtle 2s ease-in-out infinite;
+  }
+}

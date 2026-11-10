@@ -1,0 +1,10 @@
+# Security Policy for ChungToiXayWeb
+# https://chungtoixayweb.vn
+# RFC 9116: https://www.rfc-editor.org/rfc/rfc9116
+
+Contact: mailto:support@chungtoixayweb.vn
+Expires: 2027-02-21T00:00:00.000Z
+Preferred-Languages: vi, en
+Canonical: https://chungtoixayweb.vn/.well-known/security.txt
+Policy: https://chungtoixayweb.vn/security-policy
+

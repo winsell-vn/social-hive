@@ -1,0 +1,27 @@
+# robots.txt for ChungToiXayWeb Social Blog Platform
+# https://chungtoixayweb.vn
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://chungtoixayweb.vn/sitemap.xml
+
+# Disallow private/admin areas
+Disallow: /admin/
+Disallow: /messages/
+Disallow: /settings/
+Disallow: /api/
+Disallow: /compose/
+Disallow: /notifications/
+
+# Crawl rate limits for non-Google bots
+User-agent: Bingbot
+Crawl-delay: 5
+
+User-agent: Yandex
+Crawl-delay: 10
+
+User-agent: Baiduspider
+Crawl-delay: 10
+

@@ -1,0 +1,141 @@
+# Chúng Tôi Xây Web
+
+> Chúng Tôi Xây Web (chungtoixayweb.vn) là nền tảng mạng xã hội và công ty dịch vụ thiết kế website, phát triển phần mềm, marketing số tại TP. Hồ Chí Minh, Việt Nam. Cung cấp hơn 25 dịch vụ từ thiết kế web, SEO, quảng cáo, phát triển ứng dụng di động đến giải pháp AI và tự động hóa. Phục vụ khách hàng từ startup đến doanh nghiệp lớn với mức giá từ 295K đến 800M+ VND.
+
+Nền tảng kết hợp mạng xã hội cộng đồng (đăng bài, bình luận, kết bạn, theo dõi) với dịch vụ chuyên nghiệp B2B. Người dùng có hệ thống karma/danh tiếng 6 cấp từ NEWCOMER đến LEGEND. Hỗ trợ tư vấn 24/7 qua chatbot AI tên Hưng DPS sử dụng LLaMA 3.3 70B.
+
+Công nghệ: Next.js 16 + React + TypeScript (Frontend), NestJS + Prisma + MySQL (Backend), Redis + Bull queues, Groq AI (LLaMA 3.3 70B primary, LLaMA 3.1 8B fallback). Hỗ trợ song ngữ Việt-Anh.
+
+## Giới thiệu
+
+- [Trang chủ](https://chungtoixayweb.vn): Trang chính của nền tảng với giới thiệu dịch vụ và chatbot tư vấn
+- [Giới thiệu](https://chungtoixayweb.vn/about): Thông tin về công ty, đội ngũ, và sứ mệnh
+- [Liên hệ](https://chungtoixayweb.vn/contact): Thông tin liên hệ, địa chỉ TP.HCM, và form gửi yêu cầu báo giá
+- [Bảng giá dịch vụ](https://chungtoixayweb.vn/bang-gia): Bảng giá chi tiết tất cả 25+ dịch vụ với các gói từ cơ bản đến enterprise
+
+## Website & Tên miền
+
+- [Đăng ký tên miền](https://chungtoixayweb.vn/bang-gia): Tên miền .com (295K/năm), .vn (395K/năm), .net, .org, .io và các đuôi khác
+- [Hosting & Server](https://chungtoixayweb.vn/bang-gia): NVMe Hosting (450K-2.5M/năm), VPS (2M-12M/năm), Dedicated Server theo yêu cầu
+- [Chứng chỉ SSL](https://chungtoixayweb.vn/bang-gia): AutoSSL miễn phí, DV SSL (500K/năm), OV SSL (2M/năm), EV SSL (8M/năm)
+- [Thiết kế Website](https://chungtoixayweb.vn/bang-gia): Landing page (3.5M-8M), Website doanh nghiệp (8M-25M), E-commerce (15M-50M), Custom enterprise (50M-100M+)
+- [Tính năng bổ sung](https://chungtoixayweb.vn/bang-gia): Cổng thanh toán (2M-5M), Tích hợp CRM (3M-8M), Analytics nâng cao (2M-5M), Đa ngôn ngữ (5M-15M)
+
+## Marketing số
+
+- [Dịch vụ SEO](https://chungtoixayweb.vn/bang-gia): SEO cơ bản (5M/tháng), SEO nâng cao (10M-15M/tháng), SEO enterprise (20M-30M/tháng)
+- [Backlink & Link Building](https://chungtoixayweb.vn/bang-gia): Gói starter (3M/tháng), Professional (5M-8M/tháng), Enterprise (10M-15M/tháng)
+- [Content Marketing](https://chungtoixayweb.vn/bang-gia): Viết bài SEO (1.5M-3M/tháng), Content strategy (5M-8M/tháng), Full-service (8M-12M/tháng)
+- [Google Ads](https://chungtoixayweb.vn/bang-gia): Quản lý cơ bản (2M/tháng), Tối ưu nâng cao (4M-6M/tháng), Enterprise (8M-10M/tháng)
+- [Facebook/Meta Ads](https://chungtoixayweb.vn/bang-gia): Starter (2.5M/tháng), Growth (4M-6M/tháng), Scale (8M-10M/tháng)
+- [Email Marketing](https://chungtoixayweb.vn/bang-gia): Setup & automation (2M-4M/tháng), Full management (5M-8M/tháng)
+- [Social Media Management](https://chungtoixayweb.vn/bang-gia): 1 platform (3M/tháng), Multi-platform (6M-10M/tháng), Full-service (12M-15M/tháng)
+
+## Ứng dụng di động
+
+- [Zalo Mini App](https://chungtoixayweb.vn/bang-gia): Mini app đơn giản (5M-15M), Trung bình (20M-40M), Phức tạp (50M-80M)
+- [Mobile App iOS/Android](https://chungtoixayweb.vn/bang-gia): App cơ bản (20M-40M), App trung bình (50M-80M), App phức tạp (100M-150M)
+
+## Phần mềm & Hệ thống
+
+- [Ứng dụng Desktop](https://chungtoixayweb.vn/bang-gia): Tool đơn giản (30M-50M), Phần mềm trung bình (60M-100M), Enterprise (120M-200M)
+- [Web Application & SaaS](https://chungtoixayweb.vn/bang-gia): MVP (150M-250M), Full product (300M-500M), Enterprise SaaS (500M-800M)
+- [API & System Integration](https://chungtoixayweb.vn/bang-gia): API đơn giản (20M-40M), Integration phức tạp (50M-100M), Enterprise (100M-150M)
+- [DevOps & Cloud](https://chungtoixayweb.vn/bang-gia): Setup cơ bản (15M-25M/tháng), Managed services (30M-50M/tháng), Enterprise (60M-80M/tháng)
+- [QA & Testing](https://chungtoixayweb.vn/bang-gia): Manual testing (10M-20M/tháng), Automation (25M-35M/tháng), Full QA (40M-50M/tháng)
+- [CRM/ERP/HRM](https://chungtoixayweb.vn/bang-gia): CRM cơ bản (100M-150M), ERP trung bình (200M-350M), Enterprise suite (400M-500M)
+- [Developer Consulting](https://chungtoixayweb.vn/bang-gia): Junior (15M-20M/tháng), Senior (25M-35M/tháng), Tech Lead (40M-50M/tháng)
+
+## Thiết kế & Sáng tạo
+
+- [Logo & Brand Identity](https://chungtoixayweb.vn/bang-gia): Logo cơ bản (3M-5M), Brand identity (8M-12M), Full branding (15M-20M)
+- [UI/UX Design](https://chungtoixayweb.vn/bang-gia): UI đơn giản (8M-15M), UX research + UI (20M-35M), Enterprise design system (40M-50M)
+
+## AI & Tự động hóa
+
+- [Chatbot AI](https://chungtoixayweb.vn/bang-gia): Chatbot FAQ (10M-20M), Chatbot thông minh (30M-50M), AI Assistant (60M-80M)
+- [AI & Machine Learning](https://chungtoixayweb.vn/bang-gia): ML model đơn giản (50M-100M), AI solution (150M-200M), Enterprise AI (250M-300M)
+- [RPA - Tự động hóa](https://chungtoixayweb.vn/bang-gia): Bot đơn giản (30M-50M), Workflow automation (60M-100M), Enterprise RPA (120M-150M)
+- [Bảo trì & Hỗ trợ](https://chungtoixayweb.vn/bang-gia): Gói cơ bản (3M-5M/tháng), Standard (8M-12M/tháng), Premium (15M-20M/tháng)
+
+## Gói Combo
+
+- [Startup Combo](https://chungtoixayweb.vn/bang-gia): Website + Domain + Hosting 1 năm (3.5M VND) - Tiết kiệm 30%
+- [Business Combo](https://chungtoixayweb.vn/bang-gia): Website + SEO 3 tháng + Social setup (10M-30M VND) - Tiết kiệm 25%
+
+## Mạng xã hội
+
+- [Bảng tin](https://chungtoixayweb.vn/newsfeed): Bảng tin cộng đồng với thuật toán ưu tiên nội dung người dùng thật (AI content capped 25%)
+- [Chủ đề](https://chungtoixayweb.vn/topics): Các chủ đề thảo luận về công nghệ, thiết kế, marketing, SEO, AI
+- [Xu hướng](https://chungtoixayweb.vn/trending): Bài viết và hashtag đang thịnh hành, cập nhật real-time
+- [Blog](https://chungtoixayweb.vn/blog): Bài viết chuyên sâu về công nghệ, kinh doanh, và hướng dẫn kỹ thuật
+
+## Hệ thống Karma & Danh tiếng
+
+Người dùng tích lũy karma qua tương tác và được xếp hạng theo 6 cấp độ:
+
+- NEWCOMER: Người dùng mới, bài viết cần kiểm duyệt trước khi đăng
+- REGULAR: Người dùng thường xuyên, bài viết vẫn cần kiểm duyệt
+- TRUSTED: Người dùng đáng tin cậy, bắt đầu được bypass kiểm duyệt
+- VETERAN: Người dùng kỳ cựu, ưu tiên hiển thị trên newsfeed
+- ELITE: Người dùng ưu tú, điểm ưu tiên cao (80 điểm)
+- LEGEND: Cấp cao nhất, ưu tiên tối đa trên nền tảng
+
+Điểm ưu tiên newsfeed: ADMIN=100, high-tier (ELITE/LEGEND)=80, regular=60. Nội dung AI bị giới hạn tối đa 25% trên newsfeed.
+
+## Chatbot AI - Hưng DPS
+
+Chatbot tư vấn thông minh hỗ trợ 24/7:
+
+- Model: LLaMA 3.3 70B (primary) via Groq API, LLaMA 3.1 8B (fallback)
+- Ngôn ngữ: Tiếng Việt và tiếng Anh
+- Chức năng: Tư vấn dịch vụ, báo giá real-time, hướng dẫn chọn gói phù hợp
+- Action tags: Hỗ trợ điều khiển UI qua [ACTION:SELECT_SERVICE:slug]
+- Tích hợp: Kết nối trực tiếp với bảng giá và wizard chọn dịch vụ
+
+## Kiến trúc kỹ thuật
+
+Frontend:
+- Framework: Next.js 16 với App Router
+- UI: React + TypeScript + Tailwind CSS 3.4 + Radix UI primitives
+- State: TanStack React Query v5 (server state), Zustand với persist (client state)
+- Forms: React Hook Form + Zod validation
+- Animation: Framer Motion + tailwindcss-animate
+- Icons: Lucide React
+
+Backend:
+- Framework: NestJS với TypeScript
+- Database: MySQL + Prisma ORM
+- Cache: Redis với Bull queues cho background jobs
+- Auth: JWT access token (15 phút) + refresh token (7 ngày) trong HttpOnly cookies
+- 2FA: TOTP (Time-based One-Time Password) tùy chọn
+- CAPTCHA: Cloudflare Turnstile trên đăng ký/đăng nhập
+
+Bảo mật:
+- File upload: Xác thực magic bytes (file signature), không chỉ MIME type
+- Image processing: Sharp → WebP conversion với thumbnail/medium variants
+- UGC links: Tự động thêm rel="ugc nofollow noopener noreferrer"
+- Sessions: MySQL + Redis cache
+
+## Chính sách
+
+- [Điều khoản sử dụng](https://chungtoixayweb.vn/dieu-khoan): Điều khoản và điều kiện sử dụng nền tảng
+- [Chính sách bảo mật](https://chungtoixayweb.vn/chinh-sach-bao-mat): Chính sách bảo vệ dữ liệu người dùng theo PDPA
+- [Chính sách bảo mật thông tin](https://chungtoixayweb.vn/security-policy): Chính sách an ninh thông tin và xử lý sự cố
+
+## Dữ liệu máy đọc
+
+- [Sitemap](https://chungtoixayweb.vn/sitemap.xml): Bản đồ trang web XML cho search engines
+- [RSS Feed](https://chungtoixayweb.vn/feed.xml): RSS feed cho bài viết blog, cập nhật tự động
+- [Robots.txt](https://chungtoixayweb.vn/robots.txt): Hướng dẫn cho bot thu thập dữ liệu
+- [LLMs.txt](https://chungtoixayweb.vn/llms.txt): Phiên bản rút gọn cho AI/LLM
+
+## Optional
+
+- [Đăng nhập](https://chungtoixayweb.vn/login): Trang đăng nhập với hỗ trợ 2FA
+- [Đăng ký](https://chungtoixayweb.vn/register): Trang tạo tài khoản với Cloudflare Turnstile
+- [Tìm kiếm](https://chungtoixayweb.vn/search): Tìm kiếm bài viết, người dùng, hashtag
+- [Cài đặt](https://chungtoixayweb.vn/settings): Quản lý tài khoản và preferences (yêu cầu đăng nhập)
+- [Tin nhắn](https://chungtoixayweb.vn/messages): Nhắn tin riêng giữa người dùng (yêu cầu đăng nhập)
+- [Thông báo](https://chungtoixayweb.vn/notifications): Trung tâm thông báo (yêu cầu đăng nhập)
+

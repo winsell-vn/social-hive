@@ -1,0 +1,49 @@
+# Chúng Tôi Xây Web
+
+> Chúng Tôi Xây Web (chungtoixayweb.vn) là nền tảng mạng xã hội và công ty dịch vụ thiết kế website, phát triển phần mềm, marketing số tại Việt Nam. Cung cấp hơn 25 dịch vụ từ thiết kế web, SEO, quảng cáo, phát triển ứng dụng di động đến giải pháp AI và tự động hóa.
+
+Nền tảng kết hợp mạng xã hội cộng đồng (đăng bài, bình luận, kết bạn, theo dõi) với dịch vụ chuyên nghiệp B2B. Người dùng có hệ thống karma/danh tiếng từ NEWCOMER đến LEGEND. Hỗ trợ tư vấn qua chatbot AI tên Hưng DPS.
+
+Công nghệ: Next.js 16 (Frontend), NestJS + Prisma + MySQL (Backend), Redis, Groq AI (LLaMA 3.3 70B). Hỗ trợ tiếng Việt và tiếng Anh.
+
+## Giới thiệu
+
+- [Trang chủ](https://chungtoixayweb.vn): Trang chính của nền tảng
+- [Giới thiệu](https://chungtoixayweb.vn/about): Thông tin về công ty và đội ngũ
+- [Liên hệ](https://chungtoixayweb.vn/contact): Thông tin liên hệ và form gửi yêu cầu
+- [Bảng giá dịch vụ](https://chungtoixayweb.vn/bang-gia): Bảng giá chi tiết tất cả dịch vụ
+
+## Dịch vụ chính
+
+- [Thiết kế Website](https://chungtoixayweb.vn/bang-gia): Landing page, website doanh nghiệp, thương mại điện tử, website tùy chỉnh (3.5M - 100M+ VND)
+- [SEO & Marketing](https://chungtoixayweb.vn/bang-gia): SEO, Google Ads, Facebook Ads, content marketing, email marketing, quản lý mạng xã hội
+- [Phát triển ứng dụng](https://chungtoixayweb.vn/bang-gia): Ứng dụng di động iOS/Android, Zalo Mini App, ứng dụng desktop
+- [Phần mềm & Hệ thống](https://chungtoixayweb.vn/bang-gia): Web app, SaaS, CRM/ERP/HRM, API integration, DevOps
+- [AI & Tự động hóa](https://chungtoixayweb.vn/bang-gia): Chatbot AI, Machine Learning, RPA tự động hóa quy trình
+- [Thiết kế & Sáng tạo](https://chungtoixayweb.vn/bang-gia): Logo, nhận diện thương hiệu, UI/UX design
+- [Tên miền & Hosting](https://chungtoixayweb.vn/bang-gia): Đăng ký tên miền (.com, .vn), hosting NVMe, VPS, SSL
+
+## Mạng xã hội
+
+- [Bảng tin](https://chungtoixayweb.vn/newsfeed): Bảng tin cộng đồng với thuật toán ưu tiên nội dung người dùng thật
+- [Chủ đề](https://chungtoixayweb.vn/topics): Các chủ đề thảo luận về công nghệ, thiết kế, marketing
+- [Xu hướng](https://chungtoixayweb.vn/trending): Bài viết và hashtag đang thịnh hành
+- [Blog](https://chungtoixayweb.vn/blog): Bài viết chuyên sâu về công nghệ và kinh doanh
+
+## Chính sách
+
+- [Điều khoản sử dụng](https://chungtoixayweb.vn/dieu-khoan): Điều khoản và điều kiện sử dụng nền tảng
+- [Chính sách bảo mật](https://chungtoixayweb.vn/chinh-sach-bao-mat): Chính sách bảo vệ dữ liệu người dùng
+- [Chính sách bảo mật thông tin](https://chungtoixayweb.vn/security-policy): Chính sách an ninh thông tin
+
+## Dữ liệu máy đọc
+
+- [Sitemap](https://chungtoixayweb.vn/sitemap.xml): Bản đồ trang web XML
+- [RSS Feed](https://chungtoixayweb.vn/feed.xml): RSS feed cho bài viết blog
+- [Robots.txt](https://chungtoixayweb.vn/robots.txt): Hướng dẫn cho bot thu thập dữ liệu
+
+## Optional
+
+- [Đăng nhập](https://chungtoixayweb.vn/login): Trang đăng nhập tài khoản
+- [Đăng ký](https://chungtoixayweb.vn/register): Trang tạo tài khoản mới
+- [Tìm kiếm](https://chungtoixayweb.vn/search): Tìm kiếm bài viết, người dùng, hashtag
