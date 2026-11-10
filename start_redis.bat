@@ -1,16 +1,32 @@
-@REM @@ -1,56 +0,0 @@
 @echo off
 echo ========================================
-echo   Redis Server Startup Script
+echo   Redis Server Startup Script (Windows)
 echo ========================================
 echo.
 
-REM Determine Redis path: REDIS_HOME env var, or default installation path
+REM Determine Redis path.
+REM   1. REDIS_HOME environment variable (recommended - set it explicitly).
+REM   2. .\Redis next to this script.
+REM   3. ..\Redis (parent of this repository).
+set "REDIS_PATH="
+
 if defined REDIS_HOME (
     set "REDIS_PATH=%REDIS_HOME%"
-) else (
-    set "REDIS_PATH=D:\Project\SocialMedia\Redis"
+) else if exist "%~dp0Redis\redis-server.exe" (
+    set "REDIS_PATH=%~dp0Redis"
+) else if exist "%~dp0..\Redis\redis-server.exe" (
+    set "REDIS_PATH=%~dp0..\Redis"
 )
+
+if not defined REDIS_PATH (
+    echo ERROR: Could not locate redis-server.exe
+    echo Set the REDIS_HOME environment variable to the folder that contains
+    echo redis-server.exe, then run this script again.
+    exit /b 1
+)
+
+echo Using Redis path: %REDIS_PATH%
+echo.
 
 echo Stopping any existing Redis instances...
 
@@ -39,7 +55,6 @@ echo Starting Redis Server...
 REM Verify target directory exists
 if not exist "%REDIS_PATH%" (
     echo ERROR: Redis directory not found: %REDIS_PATH%
-    echo Set REDIS_HOME environment variable or install Redis at D:\Project\SocialMedia\Redis
     exit /b 1
 )
 
@@ -54,4 +69,3 @@ if %ERRORLEVEL% neq 0 (
     echo ERROR: Failed to start Redis server
     exit /b 1
 )
-

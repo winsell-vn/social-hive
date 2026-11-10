@@ -4,12 +4,50 @@ import * as path from 'path';
 import { platform } from 'os';
 
 const IS_WINDOWS = platform() === 'win32';
-const REDIS_PATH = process.env.REDIS_PATH || (IS_WINDOWS ? 'D:\\Project\\SocialMedia\\Redis' : '/usr/bin');
+
+/**
+ * Candidate directories that may contain the `redis-server` executable.
+ *
+ * Resolution order:
+ *  1. `REDIS_PATH` environment variable (recommended - set it explicitly).
+ *  2. `Redis/` inside the repository root.
+ *  3. `Redis/` next to the repository root (a common local layout).
+ *  4. `/usr/bin` on Linux/macOS.
+ */
+const REDIS_CANDIDATES = [
+  process.env.REDIS_PATH,
+  path.resolve(__dirname, '..', '..', 'Redis'),
+  path.resolve(__dirname, '..', '..', '..', 'Redis'),
+  IS_WINDOWS ? undefined : '/usr/bin',
+].filter((candidate): candidate is string => Boolean(candidate));
+
+const REDIS_PATH = REDIS_CANDIDATES[0];
 const REDIS_HOST = process.env.REDIS_HOST || 'localhost';
 const REDIS_PORT = parseInt(process.env.REDIS_PORT || '6379', 10);
-const REDIS_EXECUTABLE = IS_WINDOWS
-  ? path.join(REDIS_PATH, 'redis-server.exe')
-  : path.join(REDIS_PATH, 'redis-server');
+
+/**
+ * Pick the first candidate directory that actually contains a redis-server binary.
+ */
+function resolveRedisExecutable(): { dir: string; executable: string } {
+  const fs = require('fs') as typeof import('fs');
+
+  for (const dir of REDIS_CANDIDATES) {
+    const executable = path.join(
+      dir,
+      IS_WINDOWS ? 'redis-server.exe' : 'redis-server',
+    );
+    if (fs.existsSync(executable)) {
+      return { dir, executable };
+    }
+  }
+
+  // Fall back to the first candidate so error messages point somewhere sensible.
+  const dir = REDIS_CANDIDATES[0];
+  return {
+    dir,
+    executable: path.join(dir, IS_WINDOWS ? 'redis-server.exe' : 'redis-server'),
+  };
+}
 
 /**
  * Check if Redis is already running on the configured port
@@ -62,20 +100,21 @@ async function waitForRedis(maxAttempts = 30, delayMs = 500): Promise<boolean> {
  * Start Redis server
  */
 async function startRedisServer(): Promise<boolean> {
-  console.log(`[Redis] Starting Redis server from: ${REDIS_EXECUTABLE}`);
-  
+  const { dir: redisDir, executable } = resolveRedisExecutable();
+  console.log(`[Redis] Starting Redis server from: ${executable}`);
+
   try {
     // Check if executable exists
     const fs = await import('fs');
-    if (!fs.existsSync(REDIS_EXECUTABLE)) {
-      console.error(`[Redis] ERROR: Redis executable not found at: ${REDIS_EXECUTABLE}`);
+    if (!fs.existsSync(executable)) {
+      console.error(`[Redis] ERROR: Redis executable not found at: ${executable}`);
       console.error('[Redis] Please ensure Redis is installed at the configured REDIS_PATH');
       return false;
     }
 
     // Spawn Redis server as detached process
-    const redisProcess = spawn(REDIS_EXECUTABLE, [], {
-      cwd: REDIS_PATH,
+    const redisProcess = spawn(executable, [], {
+      cwd: redisDir,
       detached: true,
       stdio: 'ignore',
       ...(IS_WINDOWS && { windowsHide: true }),
@@ -113,7 +152,12 @@ export async function ensureRedisRunning(): Promise<boolean> {
   if (!started) {
     console.error('[Redis] ERROR: Failed to start Redis server');
     console.error('[Redis] Please ensure Redis is installed and the path is correct');
-    console.error(`[Redis] Expected Redis path: ${REDIS_PATH}`);
+    console.error(
+      `[Redis] Searched: ${REDIS_CANDIDATES.join(', ')}`,
+    );
+    console.error(
+      '[Redis] Set REDIS_PATH to the folder containing redis-server and try again.',
+    );
     return false;
   }
   
